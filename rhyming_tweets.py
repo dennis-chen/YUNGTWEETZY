@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from pattern.web import Twitter
 import time
 
@@ -21,5 +20,4 @@ def pull_tweets('keyword'):
     """
     print 'placeholder'
 
-def pull
->>>>>>> 8c8dba9ae0a31ab948d669585dd41e827086686d
+# def pull
