@@ -7,9 +7,6 @@ import time
 #     s.update(bytes=1024)
 #     print s[-1].text if s else ''
 
-if __name == "__main__":
-    print hello
-    
 #import modules needed to pull tweets
 #import python TLK probably to get rhyming words
 #try using topsy and otter.topsy.com
@@ -31,4 +28,5 @@ def group_rhyming_tweets(processed_tweets):
     are sorted from largest to smallest."""
     return None
     
-    
+if __name == "__main__":
+    print 'call test functions here'
