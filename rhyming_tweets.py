@@ -14,10 +14,21 @@ if __name == "__main__":
 #import python TLK probably to get rhyming words
 #try using topsy and otter.topsy.com
 
-def pull_tweets('keyword'):
+def pull_tweets(keyword):
     """creates a textfile of tweets pulled using pattern's search engine function
-        
+    returns whatever the hell pattern or topsy or otter return
     """
-    print 'placeholder'
+    return None
 
-# def pull
+def process_tweets(the_raw_tweets,shortest_tweet_length_allowed):
+    """removes hashtags at end, removes links, and filters tweets that are too short
+    return type is whatever it took as input"""
+    return None
+    
+def group_rhyming_tweets(processed_tweets):
+    """this will probably have to broken into a few more functions. takes tweets as input
+    and returns a list of lists of tweets whose last words rhyme. The lists inside the list
+    are sorted from largest to smallest."""
+    return None
+    
+    
