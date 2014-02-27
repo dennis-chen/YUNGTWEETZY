@@ -10,7 +10,7 @@ import curses
 from curses.ascii import isdigit
 #Setting up Twitter API
 api = twitter.Api(
-#insert your public and private codes here!
+#insert your api info here
  )
  
 def process_tweet(tweet):
@@ -28,7 +28,7 @@ def process_tweet(tweet):
     proper_spaces = re.sub(r'\s+',' ',no_RT)
     no_beginning = re.sub('^\s','',proper_spaces)
     no_unicode = no_beginning.decode('ascii', 'replace').replace(u'\ufffd', '')
-    sentences = tokenize.sent_tokenize(no_unicode) #breaks tweet into sentences
+    sentences = nltk.sent_tokenize(no_unicode) #breaks tweet into sentences
     return max(sentences, key=len) #returns sentence with the most characters
     
 def process_tweet_unit_test():
@@ -64,10 +64,9 @@ def count_syllables_pseudo(word):
             count = count - 1
     return count
     
-def count_syllables(word):
+def count_syllables(word, dictionary):
     """returns number of syllables in a given word using CMU's syllable dictionary"""
-    d = cmudict.dict()
-    phenom_list = d.get(word)
+    phenom_list = dictionary.get(word)
     if phenom_list == None:
         return count_syllables_pseudo(word)
     syllable_count = 0
@@ -75,12 +74,35 @@ def count_syllables(word):
         if isdigit(phenom[-1]): #cmu dictionary looks things up with 
             syllable_count+=1
     return syllable_count
+    
+def count_syllables_sentence(sentence,dictionary):  #pass in dictionary to avoid having to reinitialize it multiple times in order to increase speed
+    """returns number of syllables in a sentence"""
+    word_list = sentence.split()
+    total_syllables = 0    
+    for word in word_list:
+        total_syllables+=count_syllables(word,dictionary)
+    return total_syllables
+
+def unit_test_count_syllables_sentence():
+    dictionary = cmudict.dict()
+    print count_syllables_sentence('hello please check my syllables',dictionary)
+    print count_syllables_sentence('checking some syllables right now dog',dictionary)
         
 def filter_tweets_by_syllables(tweet_list,min_syllable_count,max_syllable_count):
-    """searches tweet_list and returns tweets with syllable count in specified range"""    
-    return None
-        
-def group_rhyming_tweets(tweet_list):
+    """searches tweet_list and returns tweets with syllable count in specified range"""  
+    filtered_list = []
+    dictionary = cmudict.dict()
+    for tweet in tweet_list:
+        if min_syllable_count < count_syllables_sentence(tweet,dictionary) < max_syllable_count:
+            filtered_list.append(tweet)
+    return filtered_list
+    
+def filter_tweets_by_syllables_unit_test():
+    tweet_list = get_tweets_about('nigga',20000)
+    print filter_tweets_by_syllables(tweet_list,2,40)
+    
+    
+def group_rhyming_tweets(filtered_tweet_list):
     """groups rhyming tweets into lists, then returns a list containing those lists. lists are sorted so that the list with the most rhyming words
     is first in the list."""
     return None
