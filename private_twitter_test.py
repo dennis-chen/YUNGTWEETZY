@@ -9,9 +9,7 @@ import twitter
 import curses
 from curses.ascii import isdigit
 #Setting up Twitter API
-api = twitter.Api(
-#insert your api info here
- )
+api = twitter.Api(consumer_key='gw3SKFB4E6QUx5H7X4L7w', consumer_secret='DTmn53X0evUKlWEhtUVpmoP5XdKQgPm9e58NYuJ3uQs', access_token_key='849422268-9oZM01UHemZpo8neub9neujecYJhOhH9xDHTu6ES', access_token_secret='SlPTdORM4vs8jP31km1e2mykvJ4QFgLzKXT3wxw18iL33')
  
 def process_tweet(tweet):
     """given a tweet string, removes hashtags at end of sentences, removes links, 
@@ -128,7 +126,7 @@ def does_rhyme_unit_test():
     print does_rhyme('cat','tot',2)
     print does_rhyme('hello','yellow',2)
     
-print does_rhyme_unit_test()
+# print does_rhyme_unit_test()
     
 def sentence_does_rhyme(sentence_1,sentence_2,num_of_matching_end_syl):
     return does_rhyme(sentence_1.split()[-1],sentence_2.split()[-1],num_of_matching_end_syl)
@@ -169,3 +167,6 @@ def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,twee
     """returns list of lists of grouped rhyming tweets, of specified line lengths. Searches through specified number of tweets to create this list."""
     tweet_list = get_tweets_about(keyword,tweets_to_search_through)
     return filter_tweets_by_syllables(tweet_list,min_line_length,max_line_length)
+
+# if __name__ == "__main__":
+#     # print twitter.Api
