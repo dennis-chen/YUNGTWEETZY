@@ -6,11 +6,11 @@ import string
 import nltk
 from nltk.corpus import cmudict
 import twitter
-import curses
 from curses.ascii import isdigit
+import RhymeMaker #RhymeMaker is a python project by yat choi, we pulled from his github: https://github.com/yatchoi/rhymemaker
 #Setting up Twitter API
 api = twitter.Api(
-#insert your api info here
+#enter private twitter api data here
  )
  
 def process_tweet(tweet):
@@ -40,6 +40,7 @@ def get_tweets_about(keyword, result_count):
     """returns a result_count length list of sentences from tweets that contain keyword"""
     search = api.GetSearch(term=keyword, lang='en', result_type='recent', count=result_count, max_id='')
     tweet_list = [] #we'll see if preallocation is neccessary... [None]*result_count
+    print tweet_list    
     for t in search:
          #Add the .encode to force encoding
          tweet = t.text.encode('utf-8')
@@ -87,7 +88,27 @@ def unit_test_count_syllables_sentence():
     dictionary = cmudict.dict()
     print count_syllables_sentence('hello please check my syllables',dictionary)
     print count_syllables_sentence('checking some syllables right now dog',dictionary)
-        
+    
+def cut_tweet_to_syllables(tweet,syllable_cut_num,dictionary):
+    """cuts the tweet down the appropriate number of syllables, using the syllable_cut_num as the minimum size it will return, since this function will not cut a word in half to get the right number of syllables."""
+    word_list = tweet.split()
+    syllable_target = syllable_cut_num
+    new_tweet = []
+    index = -1
+    while syllable_target > 0:
+        new_tweet.append(word_list[index])
+        syllable_target = syllable_target - count_syllables(word_list[index],dictionary)
+        index = index - 1
+    new_tweet.reverse()
+    new_tweet = ' '.join(new_tweet)
+    return new_tweet
+
+def cut_tweet_to_syllables_unit_test():
+    dictionary = cmudict.dict()
+    print cut_tweet_to_syllables('damn nigga look at all these syllables tho for real',10,dictionary)
+    
+#cut_tweet_to_syllables_unit_test()    
+    
 def filter_tweets_by_syllables(tweet_list,min_syllable_count,max_syllable_count):
     """searches tweet_list and returns tweets with syllable count in specified range"""  
     filtered_list = []
@@ -95,51 +116,30 @@ def filter_tweets_by_syllables(tweet_list,min_syllable_count,max_syllable_count)
     for tweet in tweet_list:
         if min_syllable_count < count_syllables_sentence(tweet,dictionary) < max_syllable_count:
             filtered_list.append(tweet)
+        elif count_syllables_sentence(tweet,dictionary) > max_syllable_count:
+            cut_tweet = cut_tweet_to_syllables(tweet,min_syllable_count,dictionary)
+            filtered_list.append(cut_tweet)
     return filtered_list
-    
+        
 def filter_tweets_by_syllables_unit_test():
-    tweet_list = get_tweets_about('nigga',20000)
-    print filter_tweets_by_syllables(tweet_list,2,40)
+    tweet_list = get_tweets_about('carrot',20)
+    print filter_tweets_by_syllables(tweet_list,8,10)
+    
+#filter_tweets_by_syllables_unit_test()
+    
+def sentence_rhyme_score(sentence_1,sentence_2):
+    return RhymeMaker.get_rhyme_score(sentence_1.split()[-1],sentence_2.split()[-1])
+    
+def sentence_rhyme_score_unit_test():
+    print sentence_rhyme_score('oh hello','no yellow')
+    print sentence_rhyme_score('so the dog','log')
+    print sentence_rhyme_score('potato','wefo')
+    print sentence_rhyme_score('hog','log')
+    print sentence_rhyme_score('potato','nose')
+    print sentence_rhyme_score('hello','quote')
+    
+#sentence_rhyme_score_unit_test()
 
-def do_syllables_match(syl_1,syl_2):
-    syl_1 = re.sub('[0-9]$','',syl_1)
-    syl_2 = re.sub('[0-9]$','',syl_2)
-    return syl_1 == syl_2
-    
-#print do_syllables_match('AE0','AE1')
-
-def does_rhyme(word_1,word_2,num_of_matching_end_syl):
-    """returns whether two words rhyme, based on how many matching end syllables are needed to be considered a 'rhyme' (typically two)
-    returns False if it can't find one of the words in the dictionary."""
-    entries = nltk.corpus.cmudict.entries()
-    syllables_1 = [syl for word, syl in entries if word == word_1]
-    syllables_2 = [syl for word, syl in entries if word == word_2]
-    print syllables_1
-    print syllables_2
-    if len(syllables_1) == 0 or len(syllables_2) == 0:
-        return False
-    return do_syllables_match(syllables_1[0][-num_of_matching_end_syl:], syllables_2[0][-num_of_matching_end_syl:])
-
-def does_rhyme_unit_test():
-    print does_rhyme('lol','bol',2)  
-    print does_rhyme('cat','dog',2)
-    print does_rhyme('cat','bat',2)
-    print does_rhyme('cat','tot',2)
-    print does_rhyme('cat','tot',2)
-    print does_rhyme('hello','yellow',2)
-    
-print does_rhyme_unit_test()
-    
-def sentence_does_rhyme(sentence_1,sentence_2,num_of_matching_end_syl):
-    return does_rhyme(sentence_1.split()[-1],sentence_2.split()[-1],num_of_matching_end_syl)
-    
-def sentence_does_rhyme_unit_test():
-    print sentence_does_rhyme('oh hello','no yellow',2)
-    print sentence_does_rhyme('so the dog','log',2)
-    print sentence_does_rhyme('potato','wefo',2)
-    
-#print sentence_does_rhyme_unit_test()
-    
 def group_rhyming_tweets(filtered_tweet_list):
     """groups rhyming tweets into lists, then returns a list containing those lists. lists are sorted so that the list with the most rhyming words
     is first in the list."""
@@ -150,16 +150,18 @@ def group_rhyming_tweets(filtered_tweet_list):
         rhyme_list = [copy_filtered_tweet_list[index]]        
         i = index+1
         while i < len(copy_filtered_tweet_list):
-            if sentence_does_rhyme(copy_filtered_tweet_list[index],copy_filtered_tweet_list[i],2):
+            if sentence_rhyme_score(copy_filtered_tweet_list[index],copy_filtered_tweet_list[i]) >= 4:
                 rhyme_list.append(copy_filtered_tweet_list[i])
                 copy_filtered_tweet_list.pop(i)
-                print rhyme_list
                 i = i-1
             i = i+1
+        rhyme_list = list(set(rhyme_list)) #remove non-unique entries by converting to a set and back again
         grouped_rhyming_tweets.append(rhyme_list)
         index = index +1
-    return grouped_rhyming_tweets
-            
+    #grouped_rhyming_tweets = sorted(grouped_rhyming_tweets, key = len, reverse = True)
+    grouped_rhyming_tweets = [i for i in grouped_rhyming_tweets if len(i) > 1]
+    return grouped_rhyming_tweets     
+       
 def group_rhyming_tweet_unit_test():
     print group_rhyming_tweets(['oh hello','no yellow','so the dog','hog','nose','log','potato','wefo','nog'])
     
@@ -168,4 +170,40 @@ def group_rhyming_tweet_unit_test():
 def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,tweets_to_search_through):
     """returns list of lists of grouped rhyming tweets, of specified line lengths. Searches through specified number of tweets to create this list."""
     tweet_list = get_tweets_about(keyword,tweets_to_search_through)
-    return filter_tweets_by_syllables(tweet_list,min_line_length,max_line_length)
+    filtered_tweets = filter_tweets_by_syllables(tweet_list,min_line_length_syl,max_line_length_syl)
+    return group_rhyming_tweets(filtered_tweets)
+
+print get_rhyming_lines_about('carrot',10,15,200)
+
+
+#NOTE: the code below was written originally to determine if words rhymed, but it turns out that the module we downloaded is just way more sophisticated and better at finding rhymes.
+#def do_syllables_match(syl_list_1,syl_list_2):
+#    for i in range(len(syl_list_1)):
+#        syl_1 = re.sub('[0-9]$','',syl_list_1[i])
+#        syl_2 = re.sub('[0-9]$','',syl_list_2[i])
+#        if syl_1 != syl_2:
+#            return False
+#    return True
+#
+#def does_rhyme(word_1,word_2,num_of_matching_end_syl):
+#    """returns whether two words rhyme, based on how many matching end syllables are needed to be considered a 'rhyme' (typically two)
+#    returns False if it can't find one of the words in the dictionary."""
+#    entries = nltk.corpus.cmudict.entries()
+#    syllables_1 = [syl for word, syl in entries if word == word_1]
+#    syllables_2 = [syl for word, syl in entries if word == word_2]
+#    if not syllables_1 or not syllables_2:
+#        return False
+#    print syllables_1[0][-num_of_matching_end_syl:]
+#    print syllables_2[0][-num_of_matching_end_syl:]
+#    return do_syllables_match(syllables_1[0][-num_of_matching_end_syl:],syllables_2[0][-num_of_matching_end_syl:])
+#    
+#def does_rhyme_unit_test():
+#    print does_rhyme('lol','bol',2)  
+#    print does_rhyme('cat','dog',2)
+#    print does_rhyme('cat','bat',2)
+#    print does_rhyme('cat','tot',2)
+#    print does_rhyme('cat','tot',2)
+#    print does_rhyme('hello','yellow',2)
+#    
+#    
+#sentence_does_rhyme_unit_test()
