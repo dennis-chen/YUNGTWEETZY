@@ -100,12 +100,70 @@ def filter_tweets_by_syllables(tweet_list,min_syllable_count,max_syllable_count)
 def filter_tweets_by_syllables_unit_test():
     tweet_list = get_tweets_about('nigga',20000)
     print filter_tweets_by_syllables(tweet_list,2,40)
+
+def do_syllables_match(syl_1,syl_2):
+    syl_1 = re.sub('[0-9]$','',syl_1)
+    syl_2 = re.sub('[0-9]$','',syl_2)
+    return syl_1 == syl_2
     
+#print do_syllables_match('AE0','AE1')
+
+def does_rhyme(word_1,word_2,num_of_matching_end_syl):
+    """returns whether two words rhyme, based on how many matching end syllables are needed to be considered a 'rhyme' (typically two)
+    returns False if it can't find one of the words in the dictionary."""
+    entries = nltk.corpus.cmudict.entries()
+    syllables_1 = [syl for word, syl in entries if word == word_1]
+    syllables_2 = [syl for word, syl in entries if word == word_2]
+    print syllables_1
+    print syllables_2
+    if len(syllables_1) == 0 or len(syllables_2) == 0:
+        return False
+    return do_syllables_match(syllables_1[0][-num_of_matching_end_syl:], syllables_2[0][-num_of_matching_end_syl:])
+
+def does_rhyme_unit_test():
+    print does_rhyme('lol','bol',2)  
+    print does_rhyme('cat','dog',2)
+    print does_rhyme('cat','bat',2)
+    print does_rhyme('cat','tot',2)
+    print does_rhyme('cat','tot',2)
+    print does_rhyme('hello','yellow',2)
+    
+print does_rhyme_unit_test()
+    
+def sentence_does_rhyme(sentence_1,sentence_2,num_of_matching_end_syl):
+    return does_rhyme(sentence_1.split()[-1],sentence_2.split()[-1],num_of_matching_end_syl)
+    
+def sentence_does_rhyme_unit_test():
+    print sentence_does_rhyme('oh hello','no yellow',2)
+    print sentence_does_rhyme('so the dog','log',2)
+    print sentence_does_rhyme('potato','wefo',2)
+    
+#print sentence_does_rhyme_unit_test()
     
 def group_rhyming_tweets(filtered_tweet_list):
     """groups rhyming tweets into lists, then returns a list containing those lists. lists are sorted so that the list with the most rhyming words
     is first in the list."""
-    return None
+    copy_filtered_tweet_list = list(filtered_tweet_list)
+    grouped_rhyming_tweets = []
+    index = 0
+    while index < len(copy_filtered_tweet_list)-1: #don't need to check last element for rhymes against other words b/c all pairs of words checked already by that point
+        rhyme_list = [copy_filtered_tweet_list[index]]        
+        i = index+1
+        while i < len(copy_filtered_tweet_list):
+            if sentence_does_rhyme(copy_filtered_tweet_list[index],copy_filtered_tweet_list[i],2):
+                rhyme_list.append(copy_filtered_tweet_list[i])
+                copy_filtered_tweet_list.pop(i)
+                print rhyme_list
+                i = i-1
+            i = i+1
+        grouped_rhyming_tweets.append(rhyme_list)
+        index = index +1
+    return grouped_rhyming_tweets
+            
+def group_rhyming_tweet_unit_test():
+    print group_rhyming_tweets(['oh hello','no yellow','so the dog','hog','nose','log','potato','wefo','nog'])
+    
+#group_rhyming_tweet_unit_test()
         
 def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,tweets_to_search_through):
     """returns list of lists of grouped rhyming tweets, of specified line lengths. Searches through specified number of tweets to create this list."""
