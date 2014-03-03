@@ -42,6 +42,8 @@ def rhyme(word, maxnum=75):
 	return output
  
 def get_rhyme_score(word1,word2):
+    if word1 == word2:
+        return 0
     pron1 = Wordsmith.tokenize(word1)
     pron2 = Wordsmith.tokenize(word2)
     return nearRhymeScore(pron1,pron2)
