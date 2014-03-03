@@ -112,7 +112,6 @@ def rap(rhymelist,hooklist):
     return rap
 
 if __name__ == "__main__":
-
     # Test to see if the code actually runs well.
     print rap([[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]],[[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]])
 
