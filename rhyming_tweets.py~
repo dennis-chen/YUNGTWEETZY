@@ -159,7 +159,6 @@ def does_rhyme_unit_test():
 #print does_rhyme_unit_test()
 
 def do_sentences_rhyme(sentence_1,sentence_2,dictionary):
-    """returns whether the last word of two sentences rhyme. this is a very simplistic implementation of a rhymechecker"""
     return does_rhyme(sentence_1.split()[-1],sentence_2.split()[-1],2,dictionary)
     
 def do_sentences_rhyme_unit_test():
@@ -172,7 +171,6 @@ def do_sentences_rhyme_unit_test():
 #print do_sentences_rhyme_unit_test()
 
 def sentence_rhyme_score(sentence_1,sentence_2):
-    """returns how well the last word of the sentence rhymes"""
     return RhymeMaker.get_rhyme_score(sentence_1.split()[-1],sentence_2.split()[-1])
  
 def sentence_rhyme_score_unit_test():
@@ -220,4 +218,4 @@ def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,twee
     filtered_tweets = filter_tweets_by_syllables(tweet_list,min_line_length_syl,max_line_length_syl)
     return group_rhyming_tweets(filtered_tweets)
 
-print get_rhyming_lines_about('weed',10,15,2000)
+#print get_rhyming_lines_about('cat',10,15,200)
