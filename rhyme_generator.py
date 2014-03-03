@@ -143,5 +143,4 @@ if __name__ == "__main__":
     rhyme_list = private_twitter_test.get_rhyming_lines_about('it',13,15,1000)
     print rhyme_list
     hook_rhyme_list = private_twitter_test.get_rhyming_lines_about('bitch',9,10,1000)
-    print hook_rhyme_list
     print rap(rhyme_list,hook_rhyme_list) 
