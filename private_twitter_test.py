@@ -9,7 +9,12 @@ import twitter
 from curses.ascii import isdigit
 import RhymeMaker #RhymeMaker is a python project by yat choi, we pulled from his github: https://github.com/yatchoi/rhymemaker
 #Setting up Twitter API
-api = twitter.Api(consumer_key='gw3SKFB4E6QUx5H7X4L7w', consumer_secret='DTmn53X0evUKlWEhtUVpmoP5XdKQgPm9e58NYuJ3uQs', access_token_key='849422268-9oZM01UHemZpo8neub9neujecYJhOhH9xDHTu6ES', access_token_secret='SlPTdORM4vs8jP31km1e2mykvJ4QFgLzKXT3wxw18iL33')
+api = twitter.Api(
+ consumer_key='traZi7PRyq0tobvM4RCg',
+ consumer_secret='kLkqEboCBCem2tjnFnauX7uclaejdgXSYjRvbCY',
+ access_token_key='2363110866-svcxSbzzI82iKpQnGpJIQZv1HQppQN8urNTnOZ5',
+ access_token_secret='dc56Cx1ulYZa2MjWWKFZk09nksKgpp8mjaUyFvMkztRFL'
+ )
  
 def process_tweet(tweet):
     """given a tweet string, removes hashtags at end of sentences, removes links, 
@@ -38,7 +43,6 @@ def get_tweets_about(keyword, result_count):
     """returns a result_count length list of sentences from tweets that contain keyword"""
     search = api.GetSearch(term=keyword, lang='en', result_type='recent', count=result_count, max_id='')
     tweet_list = [] #we'll see if preallocation is neccessary... [None]*result_count
-    print tweet_list    
     for t in search:
          #Add the .encode to force encoding
          tweet = t.text.encode('utf-8')
@@ -131,8 +135,6 @@ def does_rhyme(word_1,word_2,num_of_matching_end_syl):
     entries = nltk.corpus.cmudict.entries()
     syllables_1 = [syl for word, syl in entries if word == word_1]
     syllables_2 = [syl for word, syl in entries if word == word_2]
-    print syllables_1
-    print syllables_2
     if len(syllables_1) == 0 or len(syllables_2) == 0:
         return False
     return do_syllables_match(syllables_1[0][-num_of_matching_end_syl:], syllables_2[0][-num_of_matching_end_syl:])
@@ -160,6 +162,7 @@ def sentence_rhyme_score_unit_test():
     print sentence_rhyme_score('hog','log')
     print sentence_rhyme_score('potato','nose')
     print sentence_rhyme_score('hello','quote')
+    print sentence_rhyme_score(u"I never finished watching slum dog millionaire", u"all niggas is dog but i be cheating myself")
     
 #sentence_rhyme_score_unit_test()
 
@@ -196,7 +199,7 @@ def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,twee
     filtered_tweets = filter_tweets_by_syllables(tweet_list,min_line_length_syl,max_line_length_syl)
     return group_rhyming_tweets(filtered_tweets)
 
-print get_rhyming_lines_about('carrot',10,15,200)
+#print get_rhyming_lines_about('dog',10,15,2000)
 
 
 #NOTE: the code below was written originally to determine if words rhymed, but it turns out that the module we downloaded is just way more sophisticated and better at finding rhymes.
