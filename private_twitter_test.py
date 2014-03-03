@@ -43,7 +43,6 @@ def get_tweets_about(keyword, result_count):
     """returns a result_count length list of sentences from tweets that contain keyword"""
     search = api.GetSearch(term=keyword, lang='en', result_type='recent', count=result_count, max_id='')
     tweet_list = [] #we'll see if preallocation is neccessary... [None]*result_count
-    print tweet_list    
     for t in search:
          #Add the .encode to force encoding
          tweet = t.text.encode('utf-8')
@@ -154,8 +153,6 @@ def sentence_does_rhyme(sentence_1,sentence_2,num_of_matching_end_syl):
     return does_rhyme(sentence_1.split()[-1],sentence_2.split()[-1],num_of_matching_end_syl)
     
 def sentence_rhyme_score(sentence_1,sentence_2):
-    print sentence_1.split()[-1]
-    print sentence_2.split()[-1]
     return RhymeMaker.get_rhyme_score(sentence_1.split()[-1],sentence_2.split()[-1])
     
 def sentence_rhyme_score_unit_test():
