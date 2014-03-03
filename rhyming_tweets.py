@@ -10,7 +10,12 @@ from curses.ascii import isdigit
 import RhymeMaker #RhymeMaker is a python project by yat choi, we pulled from his github: https://github.com/yatchoi/rhymemaker
 #Setting up Twitter API
 api = twitter.Api(
+ consumer_key='traZi7PRyq0tobvM4RCg',
+ consumer_secret='kLkqEboCBCem2tjnFnauX7uclaejdgXSYjRvbCY',
+ access_token_key='2363110866-svcxSbzzI82iKpQnGpJIQZv1HQppQN8urNTnOZ5',
+ access_token_secret='dc56Cx1ulYZa2MjWWKFZk09nksKgpp8mjaUyFvMkztRFL'
  )
+
  
 def process_tweet(tweet):
     """given a tweet string, removes hashtags at end of sentences, removes links, 
@@ -217,4 +222,4 @@ def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,twee
     filtered_tweets = filter_tweets_by_syllables(tweet_list,min_line_length_syl,max_line_length_syl)
     return group_rhyming_tweets(filtered_tweets)
 
-#print get_rhyming_lines_about('cat',10,15,200)
+print get_rhyming_lines_about('weed',10,15,2000)
