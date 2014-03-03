@@ -31,7 +31,7 @@ def verse_generator(rhymelist, segments = 4):
         # if len(option3) == 0:
         #     options.remove('ABCB')
         if len(options) == 0:
-            return "Ran out of options."
+            return [["Ran out of options."],rhymelist]
 
         # Make choice, add to verse, and remove from original.
         random_rhyme_choice = random.choice(options)
@@ -42,7 +42,6 @@ def verse_generator(rhymelist, segments = 4):
                 for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-            print '1'
 
         elif random_rhyme_choice == 'AABB':
             AABB = random.sample(option1 + option2,2)
@@ -55,7 +54,6 @@ def verse_generator(rhymelist, segments = 4):
                 for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-            print '2'
 
         elif random_rhyme_choice == 'ABAB':
             ABAB = random.sample(option1 + option2,2)
@@ -68,9 +66,8 @@ def verse_generator(rhymelist, segments = 4):
                 for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-            print '3'
-
-        elif random_rhyme_choice == 'ABCB':
+    return [verse, rhymelist]
+        # elif random_rhyme_choice == 'ABCB':
             # AC = option3
             # ABCB = 
             # temp = random.sample(option1 + option2,2)
@@ -83,12 +80,7 @@ def verse_generator(rhymelist, segments = 4):
             #     for rhyme in rhymelist:
             #         if tweet in rhyme:
             #             rhyme.remove(tweet)
-            print '4'
 
-        # print rhymelist
-        # print verse
-
-    return [verse, rhymelist]
 
 def rap(rhymelist):
     """Creates the rap and saves it in a text file.
@@ -120,21 +112,25 @@ def rap(rhymelist):
     bridge = result[0]
     rhymelist = result[1]
 
-    rap = verse1 + [''] + hook + [''] + verse2 + [''] + hook + [''] + verse3 + [''] + bridge + [''] + hook
+    rap = verse1 + [''] 
+    rap += hook
+    rap += ['']
+    rap += verse2
+    rap += ['']
+    rap += hook
+    rap += ['']
+    rap += verse3
+    rap += ['']
+    rap += bridge
+    rap += ['']
+    rap += hook
+
+    f = open("./the_rap.txt","w")
     for verse in rap:
-        rap.write("%s\n" % verse)
+        f.write("%s\n" % verse)
+    f.close()
+
+    return rap
 
 if __name__ == "__main__":
-    # print verse_generator([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]])
-    print verse_generator([[
-    "Hold up, wait a minute, all good just a week ago","Crew at my house and we party every weekend so","On the radio, that's my favorite song","Make me bounce around, like I don't know, like I won't be here long","Now the thrill is gone, got no patience, cause I'm not a doctor","Girl why is you lying, girl why you Mufasa","Yeah, mi casa su casa, got stripper like Gaza","Got so high off volcanoes, now the flow is so lava"],
-    ["Yeah, we spit that saliva, iPhone got message from Viber",
-    "Either the head is so hydra, or we let bygones be bygones",
-    "My God, you pay for your friends? I'll take that as a compliment",
-    "Got a house full of homies, why I feel so the opposite?",
-    "Incompetent ain't the half of it",
-    "Saturdays we're Young Lavish-ing",
-    "Saddest shit, is I'm bad as it",
-    "Beans they took from the cabinet (Whoa)",
-    "Sorry, I'm just scared of the future",
-    "til 3005, I got your back, we can do this, hold up"]])[0]
+    print rap([[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]]) 
