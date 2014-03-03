@@ -82,7 +82,7 @@ def verse_generator(rhymelist, segments = 4):
             #             rhyme.remove(tweet)
 
 
-def rap(rhymelist):
+def rap(rhymelist,hooklist):
     """Creates the rap and saves it in a text file.
 
     rhymelist: A list of lists of grouped tweet sentences.
@@ -93,7 +93,7 @@ def rap(rhymelist):
     rhymelist = result[1]
 
     # Hook
-    result = verse_generator(rhymelist,2)
+    result = verse_generator(hooklist,2)
     hook = result[0]
     rhymelist = result[1]
 
@@ -133,4 +133,5 @@ def rap(rhymelist):
     return rap
 
 if __name__ == "__main__":
-    print rap([[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]]) 
+    # print rap([[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]])
+    print rap([[1,2,3,4]]) 
