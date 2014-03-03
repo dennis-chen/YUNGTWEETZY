@@ -1,6 +1,7 @@
 import math
 import random
 import private_twitter_test
+import copy
 
 def verse_generator(rhymelist, segments = 4):
     """Generates a verse in a complete song.
@@ -8,19 +9,20 @@ def verse_generator(rhymelist, segments = 4):
     rhymelist: A list of lists of grouped tweet sentences.
     segments: How many groups of four lines would you like?
     """
-    copied_rhymelist = rhymelist[:]
     verse = []
 
+    # Check to see if any segments are actually requested.
     if segments == 0:
-        return [verse,copied_rhymelist]
+        return verse
+    
+    # Loops through all the four bar segments requested.
     for segment in range(segments):
 
         # Create options that can be pulled into the rap.
-        option1 = [rhyme for rhyme in copied_rhymelist if len(rhyme) >= 4]
-        option2 = [rhyme for rhyme in copied_rhymelist if len(rhyme) >= 2 and len(rhyme) < 4]
-        option3 = [rhyme for rhyme in copied_rhymelist if len(rhyme) == 1]
+        option1 = [rhyme for rhyme in rhymelist if len(rhyme) >= 4]
+        option2 = [rhyme for rhyme in rhymelist if len(rhyme) >= 2 and len(rhyme) < 4]
+        option3 = [rhyme for rhyme in rhymelist if len(rhyme) == 1]
 
-        # options = ['AAAA','AABB','ABAB','ABCB']
         options = ['AAAA','AABB','ABAB']
         
         # Channel what is possible.
@@ -29,10 +31,8 @@ def verse_generator(rhymelist, segments = 4):
         if len(option1 + option2) <= 1:
             options.remove('AABB')
             options.remove('ABAB')
-        # if len(option3) == 0:
-        #     options.remove('ABCB')
         if len(options) == 0:
-            return [["Ran out of options."],copied_rhymelist]
+            return ["Ran out of options."]
 
         # Make choice, add to verse, and remove from original.
         random_rhyme_choice = random.choice(options)
@@ -40,84 +40,56 @@ def verse_generator(rhymelist, segments = 4):
             AAAA = random.choice(option1)[0:4]
             verse = verse + AAAA
             for tweet in AAAA:
-                for rhyme in copied_rhymelist:
+                for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-
         elif random_rhyme_choice == 'AABB':
             AABB = random.sample(option1 + option2,2)
             verse = verse + AABB[0][0:2] + AABB[1][0:2]
             for tweet in AABB[0][0:2]:
-                for rhyme in copied_rhymelist:
+                for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
             for tweet in AABB[1][0:2]:
-                for rhyme in copied_rhymelist:
+                for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-
         elif random_rhyme_choice == 'ABAB':
             ABAB = random.sample(option1 + option2,2)
             verse = verse + ABAB[0][0:1] + ABAB[1][0:1] + ABAB[0][1:2] + ABAB[1][1:2]
             for tweet in ABAB[0][0:2]:
-                for rhyme in copied_rhymelist:
+                for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
             for tweet in ABAB[1][0:2]:
-                for rhyme in copied_rhymelist:
+                for rhyme in rhymelist:
                     if tweet in rhyme:
                         rhyme.remove(tweet)
-    return [verse, copied_rhymelist]
-        # elif random_rhyme_choice == 'ABCB':
-            # AC = option3
-            # ABCB = 
-            # temp = random.sample(option1 + option2,2)
-            # verse = verse + temp[0][0:1] + temp[1][0:1] + temp[2][1:2] + temp[1][1:2]
-            # for temp in temp[0][0:2]:
-            #     for rhyme in rhymelist:
-            #         if tweet in rhyme:
-            #             rhyme.remove(tweet)
-            # for temp in temp[1][0:2]:
-            #     for rhyme in rhymelist:
-            #         if tweet in rhyme:
-            #             rhyme.remove(tweet)
-
+    
+    return verse
 
 def rap(rhymelist,hooklist):
     """Creates the rap and saves it in a text file.
 
     rhymelist: A list of lists of grouped tweet sentences.
     """
+
     # Verse 1
-    permanent_rhymelist = rhymelist[:]
-    result = verse_generator(rhymelist)
-    verse1 = result[0]
-    #rhymelist = result[1]
-    print "rhymelist1",rhymelist
+    verse1 = verse_generator(rhymelist)
 
     # Hook
-    result = verse_generator(hooklist,2)
-    hook = result[0]
-    #rhymelist = result[1]
+    hook = verse_generator(hooklist,4)
 
     # Verse 2
-    second_rhymelist = permanent_rhymelist[:]
-    result = verse_generator(permanent_rhymelist)
-    verse2 = result[0]
-    #rhymelist = result[1]
-    print "rhymelist2",permanent_rhymelist
+    verse2 = verse_generator(rhymelist)
 
     # Verse 3
-    result = verse_generator(second_rhymelist)
-    verse3 = result[0]
-    #rhymelist = result[1]
-    print "rhymelist3",second_rhymelist
+    verse3 = verse_generator(rhymelist)
 
     # Bridge (Optional)
-    result = verse_generator(permanent_rhymelist,random.randint(0,2))
-    bridge = result[0]
-    #rhymelist = result[1]
+    bridge = verse_generator(rhymelist,random.randint(0,2))
 
+    # Append all of the rap into one complete list.
     rap = verse1 + [''] 
     rap += hook
     rap += ['']
@@ -131,6 +103,7 @@ def rap(rhymelist,hooklist):
     rap += ['']
     rap += hook
 
+    # Save rap into a text document.
     f = open("./the_rap.txt","w")
     for verse in rap:
         f.write("%s\n" % verse)
