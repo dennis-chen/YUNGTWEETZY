@@ -140,7 +140,7 @@ def rap(rhymelist,hooklist):
 
 if __name__ == "__main__":
 #    print rap([[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]],[[str(i) for i in range(20)],[str(i) for i in range(21,40)],[str(i) for i in range(41,60)],[str(i) for i in range(61,80)]])
-    rhyme_list = private_twitter_test.get_rhyming_lines_about('it',13,15,1000)
-    print rhyme_list
-    hook_rhyme_list = private_twitter_test.get_rhyming_lines_about('bitch',9,10,1000)
+    rhyme_list = private_twitter_test.get_rhyming_lines_about('fuck',13,15,1000)
+    #print rhyme_list
+    hook_rhyme_list = private_twitter_test.get_rhyming_lines_about('shit',9,10,1000)
     print rap(rhyme_list,hook_rhyme_list) 

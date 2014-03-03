@@ -218,4 +218,4 @@ def get_rhyming_lines_about(keyword,min_line_length_syl,max_line_length_syl,twee
     filtered_tweets = filter_tweets_by_syllables(tweet_list,min_line_length_syl,max_line_length_syl)
     return group_rhyming_tweets(filtered_tweets)
 
-print get_rhyming_lines_about('cat',10,15,200)
+#print get_rhyming_lines_about('cat',10,15,200)
